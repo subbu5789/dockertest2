@@ -1,0 +1,45 @@
+{
+    "_comment" : "Create a AWS AMI ith AMZ Linux 2018 with Java and Tomcat",
+    "variables": {
+      "aws_access_key": "",
+      "aws_secret_key": "",
+      "region": "",
+      "source_ami":"",
+      "instance_type":"",
+      "vpc_id": "",
+      "subnet_id": ""
+    },
+    "_comment1" : "packer build -var \"aws_secret_key=foo\" template.json",
+    "_comment2" : "packer build -var-file packer-vars.json template.json",
+    "builders": [{
+      "access_key": "{{user `aws_access_key`}}",
+      "secret_key": "{{user `aws_secret_key`}}",
+      "type": "amazon-ebs",
+      "region": "{{user `region`}}",
+      "source_ami": "{{user `source_ami`}}",
+      "instance_type": "{{user `instance_type`}}",
+      "ssh_username": "ubuntu",
+      "ami_name": "testingServer-Build-{{isotime | clean_resource_name}}",
+      "vpc_id": "{{user `vpc_id`}}",
+      "subnet_id": "{{user `subnet_id`}}",
+      "tags": {
+        "Name": "testingServer-Build-{{isotime | clean_resource_name}}"
+      }
+    }],
+    "provisioners": [{
+      "type": "shell",
+      "inline": [
+                 "sudo apt update",
+                 "sudo apt install software-properties-common -y",
+                 "sudo apt-add-repository --yes --update ppa:ansible/ansible",
+                 "sudo apt update",
+                 "sudo apt install ansible -y",
+                 "sudo apt install nginx -y",
+                 "sudo apt install python-apt -y",
+                 "sudo apt install -y git stress",
+                 "sudo git clone -b aws-autoscaling https://github.com/mavrick202/ansibletemplatetesting.git /myrepo"
+        ]
+    }
+    
+]
+  }
